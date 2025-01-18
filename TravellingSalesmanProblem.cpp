@@ -13,10 +13,13 @@ int totalCost(vector<vector<int>> &cost, vector<bool> &visited, int pos, int n, 
     for (int i = 0; i < n; i++) {
         if (!visited[i]) { // If city `i` is not visited
             visited[i] = true;
-            ans = min(ans, cost[pos][i] + totalCost(cost, visited, i, n, count + 1));
-            visited[i] = false; // Backtrack
+            int currentCost = cost[pos][i] + totalCost(cost, visited, i, n, count + 1);
+            ans = min(ans, currentCost);
         }
     }
+
+    // Reset the visited state for the current city only after exploring all paths
+    visited[pos] = false;
 
     return ans;
 }
