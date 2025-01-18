@@ -1,16 +1,20 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <climits>
 using namespace std;
 
-int totalCost(int mask, int pos, int n, vector<vector<int>> &cost) {
-    if (mask == (1 << n) - 1) {
-        return cost[pos][0];
+int totalCost(vector<vector<int>> &cost, vector<bool> &visited, int pos, int n, int count) {
+    if (count == n) {
+        return cost[pos][0]; // Return to the starting city
     }
 
     int ans = INT_MAX;
 
     for (int i = 0; i < n; i++) {
-        if ((mask & (1 << i)) == 0) {
-            ans = min(ans, cost[pos][i] + totalCost((mask | (1 << i)), i, n, cost));
+        if (!visited[i]) { // If city `i` is not visited
+            visited[i] = true;
+            ans = min(ans, cost[pos][i] + totalCost(cost, visited, i, n, count + 1));
+            visited[i] = false; // Backtrack
         }
     }
 
@@ -19,7 +23,9 @@ int totalCost(int mask, int pos, int n, vector<vector<int>> &cost) {
 
 int tsp(vector<vector<int>> &cost) {
     int n = cost.size();
-    return totalCost(1, 0, n, cost);  
+    vector<bool> visited(n, false);
+    visited[0] = true; // Start from the first city
+    return totalCost(cost, visited, 0, n, 1);  
 }
 
 int main() {
@@ -28,6 +34,6 @@ int main() {
                                 {15, 35, 0, 30}, 
                                 {20, 25, 30, 0}};
     int res = tsp(cost);
-    cout << res << endl;
+    cout << "Minimum cost: " << res << endl;
     return 0;
 }
